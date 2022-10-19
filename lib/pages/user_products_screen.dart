@@ -1,4 +1,5 @@
 import 'package:ecom/pages/edit_product.dart';
+import 'package:ecom/pages/new_product.dart';
 import 'package:ecom/providers/products_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +22,7 @@ class UserProductsPage extends StatelessWidget {
             icon: const Icon(Icons.add),
             onPressed: () {
                    Navigator.of(context)
-                    .pushReplacementNamed(EditProductPage.routeName);
+                    .pushReplacementNamed(NewProductPage.routeName);
             },
           ),
         ],

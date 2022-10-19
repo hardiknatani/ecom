@@ -1,5 +1,6 @@
 import 'package:ecom/pages/cart_page.dart';
 import 'package:ecom/pages/edit_product.dart';
+import 'package:ecom/pages/new_product.dart';
 import 'package:ecom/pages/user_products_screen.dart';
 import 'package:ecom/providers/cart_provider.dart';
 import 'package:ecom/providers/orders_provider.dart';
@@ -45,7 +46,8 @@ class MyApp extends StatelessWidget {
           OrdersPage.routeName: (ctx) => OrdersPage(),
           CartPage.routeName: ((context) => CartPage()),
           UserProductsPage.routeName: ((context) => UserProductsPage()),
-          EditProductPage.routeName: ((context) => EditProductPage())
+          EditProductPage.routeName: ((context) => EditProductPage()),
+           NewProductPage.routeName: ((context) => NewProductPage())
         },
       ),
     );

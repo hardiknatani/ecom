@@ -5,20 +5,20 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 
-class EditProductPage extends StatefulWidget {
-  static const routeName = '/edit-product';
-  const EditProductPage({super.key});
+class NewProductPage extends StatefulWidget {
+  static const routeName = '/new-product';
+  const NewProductPage({super.key});
 
   @override
-  State<EditProductPage> createState() => _EditProductPageState();
+  State<NewProductPage> createState() => _NewProductPageState();
 }
 
-class _EditProductPageState extends State<EditProductPage> {
+class _NewProductPageState extends State<NewProductPage> {
   final _priceFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
   final _imageUrlFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
-  final _form = GlobalKey<FormState>();
+  final _newProductForm = GlobalKey<FormState>();
   var _editedProduct = Product(
     id: 0,
     title: 'dddd',
@@ -27,55 +27,43 @@ class _EditProductPageState extends State<EditProductPage> {
     imageUrl: '',
   );
 
-  var _initValues = {
-    'title': '1',
-    'description': '1',
-    'price': '1',
-    'imageUrl': '1',
-  };
-  var _isInit = true;
 
   void saveForm() {
-    final isValid = _form.currentState?.validate();
+    final isValid = _newProductForm.currentState?.validate();
     if (!isValid!) {
       return;
     }
-    _form.currentState?.save();
-    if (_editedProduct.id != null) {
+    _newProductForm.currentState?.save();
+
       Provider.of<ProductsProvider>(context, listen: false)
-          .updateProduct(_editedProduct.id.toString(), _editedProduct);
-    } else {
-      Provider.of<ProductsProvider>(context, listen: false).addProduct(_editedProduct);
-    }
+          .addProduct(_editedProduct);
     Navigator.of(context).pop();
   }
 
   @override
-  void didChangeDependencies() {
-  
-    if (_isInit) {
-      final productId = ModalRoute.of(context)?.settings.arguments as String;
-      if (productId != null) {
-        _editedProduct =
-            Provider.of<ProductsProvider>(context, listen: false).findById(int.parse(productId));
-        _initValues = {
-          'title': _editedProduct.title,
-          'description': _editedProduct.description,
-          'price': _editedProduct.price.toString(),
-          // 'imageUrl': _editedProduct.imageUrl,
-          'imageUrl': '',
-        };
-        _imageUrlController.text = _editedProduct.imageUrl;
-      }
-    }
-    _isInit = false;
+  void initState() {
+    _imageUrlFocusNode.addListener(_updateImageUrl);
+    super.initState();
+  }
 
-// TODO: implement didChangeDependencies
-    super.didChangeDependencies();
+
+
+  void _updateImageUrl() {
+    if (!_imageUrlFocusNode.hasFocus) {
+      if ((!_imageUrlController.text.startsWith('http') &&
+              !_imageUrlController.text.startsWith('https')) ||
+          (!_imageUrlController.text.endsWith('.png') &&
+              !_imageUrlController.text.endsWith('.jpg') &&
+              !_imageUrlController.text.endsWith('.jpeg'))) {
+        return;
+      }
+      setState(() {});
+    }
   }
 
   @override
   void dispose() {
+    _imageUrlFocusNode.removeListener(_updateImageUrl);
     _priceFocusNode.dispose();
     _descriptionFocusNode.dispose();
     _imageUrlFocusNode.dispose();
@@ -84,19 +72,20 @@ class _EditProductPageState extends State<EditProductPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Product'),
       ),
       body: Form(
-          key: _form,
+          key: _newProductForm,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           child: ListView(
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
             children: [
               // TextField(),
               TextFormField(
-                 initialValue: _initValues['title'],
+
                 decoration: InputDecoration(
                     label: Text("Title"),
                     border: OutlineInputBorder(
@@ -114,7 +103,7 @@ class _EditProductPageState extends State<EditProductPage> {
                 }),
               ),
               TextFormField(
-                 initialValue: _initValues['price'],
+
                 decoration: InputDecoration(
                     label: Text("Price"),
                     border: OutlineInputBorder(
@@ -122,7 +111,7 @@ class _EditProductPageState extends State<EditProductPage> {
                         borderSide: BorderSide(width: 2))),
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.number,
-                // focusNode: _priceFocusNode,
+                focusNode: _priceFocusNode,
                 onSaved: ((newValue) {
                   _editedProduct = Product(
                     id: 0,
@@ -134,7 +123,7 @@ class _EditProductPageState extends State<EditProductPage> {
                 }),
               ),
               TextFormField(
-                initialValue: _initValues['description'],
+
                 maxLines: 3,
                 decoration: InputDecoration(
                     label: Text("Description"),
@@ -161,7 +150,8 @@ class _EditProductPageState extends State<EditProductPage> {
                     margin: EdgeInsets.only(top: 8, right: 10),
                     decoration: BoxDecoration(
                         border: Border.all(width: 2, color: Colors.amber)),
-                    child: _imageUrlController.text.isEmpty
+                    child: _imageUrlController.text.isEmpty ||
+                            _imageUrlController.text == null
                         ? Text("Please enter an image URL")
                         : FittedBox(
                             child: Image.network(_imageUrlController.text),
@@ -169,15 +159,14 @@ class _EditProductPageState extends State<EditProductPage> {
                   ),
                   Expanded(
                     child: TextFormField(
-                      initialValue: _initValues['imageUrl'],
                       decoration: InputDecoration(
                           label: Text("Image URL"),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(2),
                               borderSide: BorderSide(width: 2))),
                       textInputAction: TextInputAction.done,
-                      // focusNode: _imageUrlFocusNode,
-                      // controller: _imageUrlController,
+                      focusNode: _imageUrlFocusNode,
+                      controller: _imageUrlController,
                       onSaved: ((newValue) {
                         _editedProduct = Product(
                           id: 0,
