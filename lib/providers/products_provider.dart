@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'product.dart';
 
-class ProductsProvider with ChangeNotifier {
+class   ProductsProvider with ChangeNotifier {
   final List<Product> _items = [
     Product(
         id: 1,
@@ -33,8 +33,23 @@ class ProductsProvider with ChangeNotifier {
     return _items.firstWhere((element) => element.id == id);
   }
 
+    void updateProduct(String id, Product newProduct) {
+    final prodIndex = _items.indexWhere((prod) => prod.id == id);
+    if (prodIndex >= 0) {
+      _items[prodIndex] = newProduct;
+      notifyListeners();
+    } else {
+      print('...');
+    }
+  }
+
    addProduct(Product value) {
     _items.add(value);
+    notifyListeners();
+  }
+
+    void deleteProduct(String id) {
+    _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
   }
 }

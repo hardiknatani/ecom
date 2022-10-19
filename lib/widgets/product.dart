@@ -31,6 +31,8 @@ class ProductWidget extends StatelessWidget {
             leading: IconButton(
               onPressed: () {
                 cart.addItem(product.id);
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text('Item added!!')));
               },
               icon: Icon(
                 Icons.add_shopping_cart,

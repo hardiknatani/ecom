@@ -1,6 +1,7 @@
 import 'package:ecom/pages/cart_page.dart';
 import 'package:ecom/pages/orders.dart';
 import 'package:ecom/pages/productOverview.dart';
+import 'package:ecom/pages/user_products_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -23,22 +24,27 @@ class MainDrawer extends StatelessWidget {
             title: Text("Products"),
           ),
           ListTile(
-                onTap: (){
-                  navigator.pushNamed(OrdersPage.routeName);
-                },
+            onTap: () {
+              navigator.pushNamed(OrdersPage.routeName);
+            },
             leading: Icon(Icons.money),
             title: Text("Orders"),
           ),
-                    ListTile(
-                onTap: (){
-                  navigator.pushNamed(CartPage.routeName);
-                },
+          ListTile(
+            onTap: () {
+              navigator.pushNamed(CartPage.routeName);
+            },
             leading: Icon(Icons.money),
             title: Text("Cart"),
           ),
           ListTile(
             leading: Icon(Icons.add_home),
             title: Text("My Products"),
+            onTap: () {
+     
+                navigator.pushNamed(UserProductsPage.routeName);
+
+            },
           )
         ],
       ),

@@ -29,9 +29,11 @@ class _ProductOverviewState extends State<ProductOverview> {
 
   @override
   Widget build(BuildContext context) {
+
     //  final products = Provider.of<ProductsProvider>(context).items;
     return Consumer<ProductsProvider>(
       builder: ((context, provider, child) => Scaffold(
+        
             appBar: AppBar(
               title: Text("Shop"),
               actions: [
