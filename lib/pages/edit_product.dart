@@ -20,7 +20,7 @@ class _EditProductPageState extends State<EditProductPage> {
   final _imageUrlController = TextEditingController();
   final _form = GlobalKey<FormState>();
   var _editedProduct = Product(
-    id: 0,
+    // id: 0,
     title: 'dddd',
     price: 0,
     description: '',
@@ -40,30 +40,32 @@ class _EditProductPageState extends State<EditProductPage> {
     if (!isValid!) {
       return;
     }
+    print(' ${_editedProduct.id} fdd');
     _form.currentState?.save();
-    if (_editedProduct.id != null) {
-      Provider.of<ProductsProvider>(context, listen: false)
-          .updateProduct(_editedProduct.id.toString(), _editedProduct);
-    } else {
-      Provider.of<ProductsProvider>(context, listen: false).addProduct(_editedProduct);
-    }
+    // if (_editedProduct.id != null) {
+    Provider.of<ProductsProvider>(context, listen: false)
+        .updateProduct(_editedProduct.id.toString().trim(), _editedProduct);
+    // } else {
+    //   Provider.of<ProductsProvider>(context, listen: false)
+    //       .addProduct(_editedProduct);
+    // }
     Navigator.of(context).pop();
   }
 
   @override
   void didChangeDependencies() {
-  
     if (_isInit) {
       final productId = ModalRoute.of(context)?.settings.arguments as String;
       if (productId != null) {
-        _editedProduct =
-            Provider.of<ProductsProvider>(context, listen: false).findById(int.parse(productId));
+        _editedProduct = Provider.of<ProductsProvider>(context, listen: false)
+            .findById(productId);
         _initValues = {
+          'id': productId,
           'title': _editedProduct.title,
           'description': _editedProduct.description,
           'price': _editedProduct.price.toString(),
           // 'imageUrl': _editedProduct.imageUrl,
-          'imageUrl': '',
+          'imageUrl': _editedProduct.imageUrl,
         };
         _imageUrlController.text = _editedProduct.imageUrl;
       }
@@ -84,6 +86,7 @@ class _EditProductPageState extends State<EditProductPage> {
 
   @override
   Widget build(BuildContext context) {
+     final productId = ModalRoute.of(context)?.settings.arguments as String;
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Product'),
@@ -96,7 +99,7 @@ class _EditProductPageState extends State<EditProductPage> {
             children: [
               // TextField(),
               TextFormField(
-                 initialValue: _initValues['title'],
+                initialValue: _initValues['title'],
                 decoration: InputDecoration(
                     label: Text("Title"),
                     border: OutlineInputBorder(
@@ -105,7 +108,7 @@ class _EditProductPageState extends State<EditProductPage> {
                 textInputAction: TextInputAction.next,
                 onSaved: ((newValue) {
                   _editedProduct = Product(
-                    id: 0,
+                    id: productId,
                     title: newValue.toString(),
                     imageUrl: _editedProduct.imageUrl,
                     price: _editedProduct.price,
@@ -114,7 +117,7 @@ class _EditProductPageState extends State<EditProductPage> {
                 }),
               ),
               TextFormField(
-                 initialValue: _initValues['price'],
+                initialValue: _initValues['price'],
                 decoration: InputDecoration(
                     label: Text("Price"),
                     border: OutlineInputBorder(
@@ -125,7 +128,7 @@ class _EditProductPageState extends State<EditProductPage> {
                 // focusNode: _priceFocusNode,
                 onSaved: ((newValue) {
                   _editedProduct = Product(
-                    id: 0,
+                    id: productId,
                     title: _editedProduct.title,
                     price: double.parse(newValue.toString()),
                     description: _editedProduct.description,
@@ -145,7 +148,7 @@ class _EditProductPageState extends State<EditProductPage> {
                 focusNode: _descriptionFocusNode,
                 onSaved: ((newValue) {
                   _editedProduct = Product(
-                    id: 0,
+                    id: productId,
                     title: _editedProduct.title,
                     price: _editedProduct.price,
                     description: newValue.toString(),
@@ -180,7 +183,7 @@ class _EditProductPageState extends State<EditProductPage> {
                       // controller: _imageUrlController,
                       onSaved: ((newValue) {
                         _editedProduct = Product(
-                          id: 0,
+                          id: productId,
                           title: _editedProduct.title,
                           price: _editedProduct.price,
                           description: _editedProduct.description,

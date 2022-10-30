@@ -74,7 +74,7 @@ class _CartPageState extends State<CartPage> {
                       child: Text('ORDER NOW'),
                       onPressed: () {
                         orderProvider.addOrders(Order(
-                            id: new Random().nextInt(100),
+                            // id: new Random().nextInt(100),
                             dateTime: "18/10/2022",
                             amount: total,
                             products: cart.items.values.toList()));

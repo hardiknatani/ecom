@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import '../widgets/badge.dart';
 
 class ProductOverview extends StatefulWidget {
@@ -21,19 +22,55 @@ class ProductOverview extends StatefulWidget {
 
 class _ProductOverviewState extends State<ProductOverview> {
   bool isFavouriteFilter = false;
-  // void toggleFavouriteFilter() {
-  //   setState(() {
-  //     isFavouriteFilter = !isFavouriteFilter;
-  //   });
-  // }
+  var isInit = true;
+  var isLoading = false;
+
+  @override
+  void initState() {
+    checkConnectivity();
+    // TODO: implement initState
+
+    // Future.delayed(Duration.zero).then((_) {
+    //   final products = Provider.of<ProductsProvider>(context).getProducts;
+    //   print(products);
+    // });
+
+    super.initState();
+  }
+
+  void checkConnectivity() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      print('connected');
+    } else {
+      print('No Internet Connection');
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (isInit) {
+      setState(() {
+        isLoading = true;
+      });
+      Provider.of<ProductsProvider>(context).fetchProducts().then((_) {
+        setState(() {
+          isLoading = false;
+        });
+      });
+    }
+    isInit = false;
+    super.didChangeDependencies();
+    
+  }
 
   @override
   Widget build(BuildContext context) {
 
-    //  final products = Provider.of<ProductsProvider>(context).items;
+    //  print(Provider.of<ProductsProvider>(context).items);
     return Consumer<ProductsProvider>(
       builder: ((context, provider, child) => Scaffold(
-        
             appBar: AppBar(
               title: Text("Shop"),
               actions: [
@@ -71,38 +108,43 @@ class _ProductOverviewState extends State<ProductOverview> {
               ],
             ),
             drawer: MainDrawer(),
-            body: GridView(
-              padding: EdgeInsets.all(15),
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  // childAspectRatio: 3.5 / 2,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20),
-              children: isFavouriteFilter
-                  ? provider.items
-                      .where((element) => element.isFavourite == true)
-                      .map(
-                        (product) => ChangeNotifierProvider.value(
-                            value: product, child: ProductWidget()),
-                      )
-                      .toList()
-                  : provider.items
-                      .map(
-                        (product) => ChangeNotifierProvider.value(
-                            value: product, child: ProductWidget()),
-                      )
-                      .toList(),
-            ),
-            floatingActionButton: FloatingActionButton(
-                child: Text('+'),
-                onPressed: () {
-                  provider.addProduct(Product(
-                      id: 1,
-                      title: 'Orange',
-                      description: "description",
-                      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTJFW0AaaaDWz7AzrVtOeCVrptS_uf2d5W4g&usqp=CAU",
-                      price: 20));
-                }),
+            body: isLoading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : GridView(
+                    padding: EdgeInsets.all(15),
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 200,
+                        // childAspectRatio: 3.5 / 2,
+                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 20),
+                    children: isFavouriteFilter
+                        ? provider.items
+                            .where((element) => element.isFavourite == true)
+                            .map(
+                              (product) => ChangeNotifierProvider.value(
+                                  value: product, child: ProductWidget()),
+                            )
+                            .toList()
+                        : provider.items
+                            .map(
+                              (product) => ChangeNotifierProvider.value(
+                                  value: product, child: ProductWidget()),
+                            )
+                            .toList(),
+                  ),
+            // floatingActionButton: FloatingActionButton(
+            //     child: Text('+'),
+            //     onPressed: () {
+            //       provider.addProduct(Product(
+            //           id: 1,
+            //           title: 'Orange',
+            //           description: "description",
+            //           imageUrl:
+            //               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTJFW0AaaaDWz7AzrVtOeCVrptS_uf2d5W4g&usqp=CAU",
+            //           price: 20));
+            //     }),
           )),
     );
   }

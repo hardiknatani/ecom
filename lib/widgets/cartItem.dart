@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 class CartItem extends StatelessWidget {
   CartItem({required this.productId, required this.quantity});
 
-  final int productId;
+  final String productId;
   final int quantity;
 
   @override

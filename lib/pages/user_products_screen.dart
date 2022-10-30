@@ -11,6 +11,10 @@ import '../widgets/drawer.dart';
 class UserProductsPage extends StatelessWidget {
   static const routeName = '/user-products';
 
+  Future<void> refreshProducts(BuildContext context) async {
+    await Provider.of<ProductsProvider>(context, listen: false).fetchProducts();
+  }
+
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<ProductsProvider>(context);
@@ -21,27 +25,31 @@ class UserProductsPage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-                   Navigator.of(context)
-                    .pushReplacementNamed(NewProductPage.routeName);
+              Navigator.of(context)
+                  .pushReplacementNamed(NewProductPage.routeName);
             },
           ),
         ],
       ),
       drawer: MainDrawer(),
-      body: Padding(
-        padding: EdgeInsets.all(8),
-        child: ListView.builder(
-          itemCount: productsData.items.length,
-          itemBuilder: (_, i) => Column(
-                children: [
-                  UserProductItem(
-                     productsData.items[i].id.toString(),
-                    productsData.items[i].title,
-                    productsData.items[i].imageUrl,
-                  ),
-                  Divider(),
-                ],
-              ),
+      body: RefreshIndicator(
+        onRefresh: () => refreshProducts(context)
+        ,
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: ListView.builder(
+            itemCount: productsData.items.length,
+            itemBuilder: (_, i) => Column(
+              children: [
+                UserProductItem(
+                  productsData.items[i].id.toString(),
+                  productsData.items[i].title,
+                  productsData.items[i].imageUrl,
+                ),  
+                Divider(),
+              ],
+            ),
+          ),
         ),
       ),
     );

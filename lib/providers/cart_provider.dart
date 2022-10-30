@@ -20,7 +20,7 @@ class CartProvider with ChangeNotifier {
   }
 
   void addItem(
-    int productId,
+    String productId,
   ) {
     if (_items.containsKey(productId)) {
       // change quantity...

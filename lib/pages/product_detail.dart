@@ -14,7 +14,7 @@ class ProductDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     
-    final int productId =
+    final String productId =
         (ModalRoute.of(context)?.settings.arguments as Map)['id'];
     
     final product = Provider.of<ProductsProvider>(context,listen: false).items.firstWhere(
